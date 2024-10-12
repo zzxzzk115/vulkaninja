@@ -1,22 +1,23 @@
 #include "vulkaninja/shader_compiler.hpp"
+#include "shaderc/shaderc.h"
 
 #include <shaderc/shaderc.hpp>
 
-#include <exception>
 #include <fstream>
 #include <memory>
+#include <stdexcept>
 #include <unordered_set>
 
 namespace
 {
-    std::string readAllText(const std::string& path)
+    auto readAllText(const std::string& path) -> std::string
     {
         std::ifstream in(path);
 
         if (in.bad())
         {
             const std::string message = "Failed to read file: " + path;
-            throw std::exception(message.c_str());
+            throw std::runtime_error(message.c_str());
         }
 
         std::stringstream ss;
@@ -25,7 +26,7 @@ namespace
         return static_cast<std::string>(ss.str());
     }
 
-    shaderc_shader_kind shaderStageToShadercKind(vulkaninja::ShaderCompiler::ShaderStage stage)
+    auto shaderStageToShadercKind(vulkaninja::ShaderCompiler::ShaderStage stage) -> shaderc_shader_kind
     {
         switch (stage)
         {
@@ -58,6 +59,9 @@ namespace
             case vulkaninja::ShaderCompiler::ShaderStage::eMesh:
                 return shaderc_mesh_shader;
         }
+
+        // fallback
+        return shaderc_vertex_shader;
     }
 } // namespace
 
@@ -122,24 +126,24 @@ namespace vulkaninja
         };
         // NOLINTEND
 
-        bool compileShaderFromFile(const std::filesystem::path& filepath,
+        auto compileShaderFromFile(const std::filesystem::path& filepath,
                                    ShaderStage                  stage,
                                    const std::string&           entrypoint,
                                    std::vector<uint32_t>&       spv,
-                                   std::string&                 message)
+                                   std::string&                 message) -> bool
         {
             const std::string src      = readAllText(filepath.generic_string());
             const std::string filename = filepath.filename().generic_string();
             return compileShaderFromSource(src, stage, entrypoint, filename, spv, message);
         }
 
-        bool compileShaderFromFile(
+        auto compileShaderFromFile(
             const std::filesystem::path&                                                        filepath,
             ShaderStage                                                                         stage,
             const std::string&                                                                  entrypoint,
             const std::vector<std::variant<std::string, std::tuple<std::string, std::string>>>& keywords,
             std::vector<uint32_t>&                                                              spv,
-            std::string&                                                                        message)
+            std::string&                                                                        message) -> bool
         {
             const std::string           src        = readAllText(filepath.generic_string());
             const std::string           filename   = filepath.filename().generic_string();
@@ -192,24 +196,24 @@ namespace vulkaninja
             return true;
         }
 
-        bool compileShaderFromSource(const std::string&     src,
+        auto compileShaderFromSource(const std::string&     src,
                                      ShaderStage            stage,
                                      const std::string&     entrypoint,
                                      const std::string&     name,
                                      std::vector<uint32_t>& spv,
-                                     std::string&           message)
+                                     std::string&           message) -> bool
         {
             return compileShaderFromSource(src, stage, entrypoint, name, {}, spv, message);
         }
 
-        bool compileShaderFromSource(
+        auto compileShaderFromSource(
             const std::string&                                                                  src,
             ShaderStage                                                                         stage,
             const std::string&                                                                  entrypoint,
             const std::string&                                                                  name,
             const std::vector<std::variant<std::string, std::tuple<std::string, std::string>>>& keywords,
             std::vector<uint32_t>&                                                              spv,
-            std::string&                                                                        message)
+            std::string&                                                                        message) -> bool
         {
             shaderc::Compiler       compiler;
             shaderc::CompileOptions options;

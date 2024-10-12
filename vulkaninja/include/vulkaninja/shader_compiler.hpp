@@ -27,34 +27,34 @@ namespace vulkaninja
             eMesh,
         };
 
-        bool compileShaderFromFile(const std::filesystem::path& filepath,
+        auto compileShaderFromFile(const std::filesystem::path& filepath,
                                    ShaderStage                  stage,
                                    const std::string&           entrypoint,
                                    std::vector<uint32_t>&       spv,
-                                   std::string&                 message);
+                                   std::string&                 message) -> bool;
 
-        bool compileShaderFromFile(
+        auto compileShaderFromFile(
             const std::filesystem::path&                                                        filepath,
             ShaderStage                                                                         stage,
             const std::string&                                                                  entrypoint,
             const std::vector<std::variant<std::string, std::tuple<std::string, std::string>>>& keywords,
             std::vector<uint32_t>&                                                              spv,
-            std::string&                                                                        message);
+            std::string&                                                                        message) -> bool;
 
-        bool compileShaderFromSource(const std::string&     src,
+        auto compileShaderFromSource(const std::string&     src,
                                      ShaderStage            stage,
                                      const std::string&     entrypoint,
                                      const std::string&     name,
                                      std::vector<uint32_t>& spv,
-                                     std::string&           message);
+                                     std::string&           message) -> bool;
 
-        bool compileShaderFromSource(
+        auto compileShaderFromSource(
             const std::string&                                                                  src,
             ShaderStage                                                                         stage,
             const std::string&                                                                  entrypoint,
             const std::string&                                                                  name,
             const std::vector<std::variant<std::string, std::tuple<std::string, std::string>>>& keywords,
             std::vector<uint32_t>&                                                              spv,
-            std::string&                                                                        message);
+            std::string&                                                                        message) -> bool;
     } // namespace ShaderCompiler
 } // namespace vulkaninja

@@ -7,6 +7,15 @@ set_version("1.0.0")
 -- set language version: C++ 20
 set_languages("cxx20")
 
+-- global options
+option("enable_extension") -- enable extensions?
+    set_default(true)
+option_end()
+
+option("build_examples") -- build examples?
+    set_default(true)
+option_end()
+
 -- if build on windows
 if is_plat("windows") then
     if is_mode("debug") then
@@ -62,3 +71,7 @@ add_rules("plugin.compile_commands.autoupdate", {outputdir = ".vscode"})
 add_repositories("my-xmake-repo https://github.com/zzxzzk115/xmake-repo.git dev")
 
 includes("vulkaninja")
+
+if has_config("build_examples") then
+    includes("examples")
+end

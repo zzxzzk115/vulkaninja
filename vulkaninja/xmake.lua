@@ -1,4 +1,9 @@
-add_requires("shaderc")
+add_requires("spdlog", "stb", "shaderc", "spirv-cross", "vulkansdk", "vulkan-hpp")
+
+if has_config("enable_extension") then
+    add_requires("glfw")
+    add_requires("imgui v1.90.9-docking", {configs = {glfw = true, vulkan = true, wchar32 = true}})
+end
 
 -- target defination, name: vulkaninja
 target("vulkaninja")
@@ -14,4 +19,9 @@ target("vulkaninja")
         add_rules("utils.symbols.export_all")
     end
 
-    add_packages("shaderc", { public = true })
+    add_packages("spdlog", "stb", "shaderc", "spirv-cross", "vulkansdk", "vulkan-hpp", { public = true })
+    
+    if has_config("enable_extension") then
+        add_packages("glfw", "imgui", { public = true })
+        add_defines("VKN_ENABLE_EXTENSION")
+    end
