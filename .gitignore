@@ -1,0 +1,19 @@
+# Visual studio code
+.vscode/
+
+# XMake
+.xmake/
+build/
+compile_commands.json
+
+# CMake
+CMakeLists.txt
+
+# VS
+vsxmake*/
+.vs/
+out/
+
+# CLion
+.idea/
+cmake-build-*/
