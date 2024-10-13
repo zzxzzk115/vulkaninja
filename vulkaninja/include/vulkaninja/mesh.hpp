@@ -84,12 +84,12 @@ namespace vulkaninja
     {
     public:
         Mesh() = default;
-        Mesh(const Context&          context,
+        Mesh(const Context&          contextIn,
              MeshUsage               usage,
              vk::MemoryPropertyFlags memoryProps,
-             std::vector<Vertex>     vertices,
-             std::vector<uint32_t>   indices,
-             std::string             name);
+             std::vector<Vertex>     verticesIn,
+             std::vector<uint32_t>   indicesIn,
+             std::string             nameIn);
         static auto createSphereMesh(const Context& context, SphereMeshCreateInfo createInfo) -> Mesh;
         static auto createPlaneMesh(const Context& context, PlaneMeshCreateInfo createInfo) -> Mesh;
         static auto createCubeMesh(const Context& context, CubeMeshCreateInfo createInfo) -> Mesh;

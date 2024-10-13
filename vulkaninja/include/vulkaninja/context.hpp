@@ -1,8 +1,5 @@
 #pragma once
 
-#undef VULKAN_HPP_DISPATCH_LOADER_DYNAMIC
-#define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
-
 #include <cstddef>
 #include <map>
 #include <type_traits>

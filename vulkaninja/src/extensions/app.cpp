@@ -17,6 +17,8 @@ namespace vulkaninja
 {
     App::App(const AppCreateInfo& createInfo)
     {
+        assert(VULKAN_HPP_DISPATCH_LOADER_DYNAMIC == 1);
+
         spdlog::set_pattern("[%^%l%$] %v");
 
         Window::init(createInfo.width, createInfo.height, createInfo.title, createInfo.windowResizable);
@@ -144,10 +146,16 @@ namespace vulkaninja
         // Get the physical device features supported by the GPU
         vk::PhysicalDeviceFeatures supportedFeatures = m_Context.getPhysicalDevice().getFeatures();
 
+        vk::PhysicalDeviceFeatures deviceFeatures;
+        deviceFeatures.setShaderInt64(supportedFeatures.shaderInt64);
+        deviceFeatures.setFragmentStoresAndAtomics(supportedFeatures.fragmentStoresAndAtomics);
+        deviceFeatures.setVertexPipelineStoresAndAtomics(supportedFeatures.vertexPipelineStoresAndAtomics);
+        deviceFeatures.setGeometryShader(supportedFeatures.geometryShader);
+        deviceFeatures.setFillModeNonSolid(supportedFeatures.fillModeNonSolid);
+        deviceFeatures.setWideLines(supportedFeatures.wideLines);
+
         // Create device extensions
-        std::vector deviceExtensions {
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-        };
+        std::vector deviceExtensions {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME};
         if (requiredExtensions.contains(Extension::eRayTracing))
         {
             deviceExtensions.push_back(VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME);
@@ -173,10 +181,12 @@ namespace vulkaninja
             deviceExtensions.push_back(VK_EXT_EXTENDED_DYNAMIC_STATE_3_EXTENSION_NAME);
         }
 
-        vk::PhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures {true};
+        vk::PhysicalDeviceDynamicRenderingFeatures    dynamicRenderingFeatures {true};
+        vk::PhysicalDeviceBufferDeviceAddressFeatures bufferAddressFeatures {true};
 
         StructureChain featuresChain;
         featuresChain.add(dynamicRenderingFeatures);
+        featuresChain.add(bufferAddressFeatures);
 
         // Add ray tracing features if required and supported
         vk::PhysicalDeviceRayTracingPipelineFeaturesKHR    rayTracingPipelineFeatures {true};
@@ -219,8 +229,10 @@ namespace vulkaninja
         }
 
         // Initialize the device with the features supported
-        m_Context.initDevice(
-            deviceExtensions, {}, featuresChain.pFirst, requiredExtensions.contains(Extension::eRayTracing));
+        m_Context.initDevice(deviceExtensions,
+                             deviceFeatures,
+                             featuresChain.pFirst,
+                             requiredExtensions.contains(Extension::eRayTracing));
 
         // Query present modes
         auto presentModes = m_Context.getPhysicalDevice().getSurfacePresentModesKHR(*m_Surface);
@@ -356,7 +368,7 @@ namespace vulkaninja
 
         // Setup font
         const std::string fontFile = "assets/fonts/Roboto-Medium.ttf";
-        io.Fonts->AddFontFromFileTTF(fontFile.c_str(), 24.0f);
+        io.Fonts->AddFontFromFileTTF(fontFile.c_str(), 16.0f);
     }
 
     void App::listSurfaceFormats()

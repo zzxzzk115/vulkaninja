@@ -25,3 +25,5 @@ target("vulkaninja")
         add_packages("glfw", "imgui", { public = true })
         add_defines("VKN_ENABLE_EXTENSION")
     end
+
+    add_defines("VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1")

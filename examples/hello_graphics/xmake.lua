@@ -16,7 +16,7 @@ target("hello_graphics")
     set_values("asset_files", "assets/**")
 
     -- add defines
-    add_defines("VKN_ENABLE_EXTENSION")
+    add_defines("VKN_ENABLE_EXTENSION", "VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1")
 
     -- set target directory
     set_targetdir("$(buildir)/$(plat)/$(arch)/$(mode)/examples/hello_graphics")
